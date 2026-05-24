@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Rounded indigo-600 background matching the logo -->
+  <rect x="2" y="2" width="28" height="28" rx="6" fill="#4f46e5" />
+  <!-- White Keyboard Lucide paths -->
+  <g transform="translate(4, 4)" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+    <path d="M6 8h.01" />
+    <path d="M10 8h.01" />
+    <path d="M14 8h.01" />
+    <path d="M18 8h.01" />
+    <path d="M6 12h.01" />
+    <path d="M18 12h.01" />
+    <path d="M12 12h.01" />
+    <path d="M10 16h4" />
+  </g>
+</svg>

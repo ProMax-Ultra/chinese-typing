@@ -10,7 +10,8 @@ import {
 import { parseContent, fetchCourseManifest, loadCourseById } from './services/courseService';
 import { TypingEngine } from './components/TypingEngine';
 import { ResultsModal } from './components/ResultsModal';
-import { Keyboard, BookOpen, Upload, Loader2, ChevronLeft, Settings, X } from 'lucide-react';
+import { CourseSelector } from './components/CourseSelector';
+import { Keyboard, Upload, Loader2, ChevronLeft, Settings, X } from 'lucide-react';
 
 const createInitialStats = (): TypingStats => ({
   wpm: 0,
@@ -67,19 +68,7 @@ const App: React.FC = () => {
     localStorage.setItem('chinese_typing_pinyin_opacity', String(pinyinOpacity));
   }, [showPinyin, pinyinSize, pinyinOpacity]);
 
-  const selectOptions = useMemo(() => {
-    const manifestOptions = courseManifest.map((course) => ({
-      id: course.id,
-      label: course.label,
-    }));
 
-    const customOptions = customCourses.map((course) => ({
-      id: course.id,
-      label: course.name,
-    }));
-
-    return [...manifestOptions, ...customOptions];
-  }, [courseManifest, customCourses]);
 
   const resetPracticeState = useCallback(() => {
     setGameStatus(GameStatus.IDLE);
@@ -318,7 +307,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col text-slate-800 font-sans">
-      <header className="bg-white border-b border-slate-200">
+      <header className="bg-white border-b border-slate-200 relative z-50">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div
@@ -343,37 +332,20 @@ const App: React.FC = () => {
             >
               <Settings size={18} />
             </button>
-            <div className="flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-1.5">
-              <BookOpen size={16} className="text-slate-500" />
-              {isManifestLoading ? (
-                <div className="flex items-center gap-2 px-2 text-sm text-slate-500">
-                  <Loader2 size={14} className="animate-spin" />
-                  <span>加载课程中...</span>
-                </div>
-              ) : (
-                <select
-                  value={selectedCourseId}
-                  onChange={(e) => {
-                    const nextValue = e.target.value;
-                    if (!nextValue) {
-                      goToCourseSelection();
-                      return;
-                    }
-
-                    openCourse(nextValue);
-                  }}
-                  className="bg-transparent border-none text-sm font-medium text-slate-700 outline-none focus:ring-0 cursor-pointer w-32 md:w-48"
-                  disabled={selectOptions.length === 0}
-                >
-                  <option value="">选择章节</option>
-                  {selectOptions.map((course) => (
-                    <option key={course.id} value={course.id}>
-                      {course.label}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
+            {isManifestLoading ? (
+              <div className="flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-1.5 text-sm text-slate-500">
+                <Loader2 size={14} className="animate-spin" />
+                <span>加载课程中...</span>
+              </div>
+            ) : (
+              <CourseSelector
+                courseManifest={courseManifest}
+                customCourses={customCourses}
+                selectedCourseId={selectedCourseId}
+                onSelectCourse={openCourse}
+                onGoToHome={goToCourseSelection}
+              />
+            )}
 
             <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept=".txt" />
             <button
@@ -388,7 +360,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="flex-1 w-full mx-auto flex flex-col pt-24">
+      <main className="flex-1 w-full mx-auto flex flex-col pt-24 relative z-10">
 
 
         <div className="flex-1">
