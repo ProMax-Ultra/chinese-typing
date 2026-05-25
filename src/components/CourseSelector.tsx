@@ -19,6 +19,7 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const selectedItemRef = useRef<HTMLButtonElement | null>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -33,6 +34,16 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
     };
   }, []);
 
+  // Scroll current course into view when dropdown is opened
+  useEffect(() => {
+    if (isOpen && selectedItemRef.current) {
+      selectedItemRef.current.scrollIntoView({
+        block: 'nearest',
+        behavior: 'auto',
+      });
+    }
+  }, [isOpen]);
+
   const selectedCourseLabel = useMemo(() => {
     if (!selectedCourseId) return '选择章节';
 
@@ -46,6 +57,10 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
   }, [selectedCourseId, courseManifest, customCourses]);
 
   const handleSelect = (courseId: string) => {
+    if (courseId === selectedCourseId) {
+      setIsOpen(false);
+      return;
+    }
     if (courseId === '') {
       onGoToHome();
     } else {
@@ -85,6 +100,7 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
               return (
                 <button
                   key={course.id}
+                  ref={isSelected ? selectedItemRef : null}
                   onClick={() => handleSelect(course.id)}
                   className={`flex items-center justify-between w-full px-3 py-2 text-left text-sm rounded-lg transition-colors duration-150 ${
                     isSelected
@@ -112,6 +128,7 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
                   return (
                     <button
                       key={course.id}
+                      ref={isSelected ? selectedItemRef : null}
                       onClick={() => handleSelect(course.id)}
                       className={`flex items-center justify-between w-full px-3 py-2 text-left text-sm rounded-lg transition-colors duration-150 ${
                         isSelected
